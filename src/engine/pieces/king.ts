@@ -15,7 +15,9 @@ export default class King extends Piece {
         const dy = [-1, 0, 1, -1, 1, -1, 0, 1];
 
         for (let index = 0; index < 8; index++) {
-            moveArray.push(new Square(currentSquare.row + dx[index], currentSquare.col + dy[index]));
+            const square: Square =  new Square(currentSquare.row + dx[index], currentSquare.col + dy[index]);
+            if (board.isReachable(square) || board.isEnemyPiece(currentSquare, square))
+                moveArray.push(square);
         }
 
         return moveArray.filter(square => board.isInside(square));
