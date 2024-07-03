@@ -12,21 +12,38 @@ export default class Pawn extends Piece {
         const currentSquare = board.findPiece(this);
         const moveArray: any[] = new Array(0);
         if (this.player == Player.WHITE) {
+            const dx = [1, 1];
+            const dy = [-1, 1];
+            for (let idx = 0; idx < dx.length; idx++) {
+                const square: Square =  new Square(currentSquare.row + dx[idx], currentSquare.col + dy[idx]);
+                if (board.isEnemyPiece(currentSquare, square))
+                    moveArray.push(square);
+                console.log(currentSquare.row + dx[idx], currentSquare.col + dy[idx]);
+                console.log(board.isEnemyPiece(currentSquare, square));
+            }
+            console.log(moveArray);
             if (!board.isReachable(new Square(currentSquare.row + 1, currentSquare.col)))
                 return moveArray;
-            if (currentSquare.row == 1) {
+            if (currentSquare.row == 1 && board.isReachable(new Square(currentSquare.row + 2, currentSquare.col))) {
                 moveArray.push(new Square(currentSquare.row + 2, currentSquare.col));
             }
             moveArray.push(new Square(currentSquare.row + 1, currentSquare.col));
         } else {
+            const dx = [-1, -1];
+            const dy = [-1, 1];
+            for (let idx = 0; idx < dx.length; idx++) {
+                const square: Square =  new Square(currentSquare.row + dx[idx], currentSquare.col + dy[idx]);
+                if (board.isEnemyPiece(currentSquare, square))
+                    moveArray.push(square);
+            }
             if (!board.isReachable(new Square(currentSquare.row - 1, currentSquare.col)))
                 return moveArray;
-            if (currentSquare.row == 6) {
+            if (currentSquare.row == 6 && board.isReachable(new Square(currentSquare.row - 2, currentSquare.col))) {
                 moveArray.push(new Square(currentSquare.row - 2, currentSquare.col));
             }
             moveArray.push(new Square(currentSquare.row - 1, currentSquare.col));
         }
 
-        return (moveArray.filter(square => board.isReachable(square))).filter(square => board.isInside(square));
+        return moveArray.filter(square => board.isInside(square));
     }
 }
