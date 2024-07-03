@@ -15,12 +15,16 @@ export default class Rook extends Piece {
         for (let row = 0; row < 8; row ++) {
             if (row == currentSquare.row)
                 continue;
+            if (!board.isReachable(new Square(row, currentSquare.col)))
+                break;
             moveArray.push(new Square(row, currentSquare.col));
         }
 
         for (let col = 0; col < 8; col ++) {
             if (col == currentSquare.col)
                 continue;
+            if (!board.isReachable(new Square(currentSquare.row, col)))
+                break;
             moveArray.push(new Square(currentSquare.row, col));
         }
 
