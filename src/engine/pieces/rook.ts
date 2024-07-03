@@ -12,17 +12,25 @@ export default class Rook extends Piece {
         const currentSquare = board.findPiece(this);
         const moveArray: any[] = new Array(0);
 
-        for (let row = 0; row < 8; row ++) {
-            if (row == currentSquare.row)
-                continue;
+        for (let row= currentSquare.row + 1; row < 8; row ++) {
             if (!board.isReachable(new Square(row, currentSquare.col)))
                 break;
             moveArray.push(new Square(row, currentSquare.col));
         }
 
-        for (let col = 0; col < 8; col ++) {
-            if (col == currentSquare.col)
-                continue;
+        for (let row= currentSquare.row - 1; row >= 0; row --) {
+            if (!board.isReachable(new Square(row, currentSquare.col)))
+                break;
+            moveArray.push(new Square(row, currentSquare.col));
+        }
+
+        for (let col = currentSquare.col + 1; col < 8; col ++) {
+            if (!board.isReachable(new Square(currentSquare.row, col)))
+                break;
+            moveArray.push(new Square(currentSquare.row, col));
+        }
+
+        for (let col = currentSquare.col - 1; col >= 0; col --) {
             if (!board.isReachable(new Square(currentSquare.row, col)))
                 break;
             moveArray.push(new Square(currentSquare.row, col));
