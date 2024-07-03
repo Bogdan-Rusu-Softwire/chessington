@@ -16,7 +16,9 @@ export default class Knight extends Piece {
         const dy = [-1, -2, -2, -1, 1, 2, 2, 1];
 
         for (let index = 0; index < dx.length; index++) {
-            moveArray.push(new Square(currentSquare.row + dx[index], currentSquare.col + dy[index]));
+            const square: Square =  new Square(currentSquare.row + dx[index], currentSquare.col + dy[index]);
+            if (board.isReachable(square) || board.isEnemyPiece(currentSquare, square))
+                moveArray.push(square);
         }
 
         return moveArray.filter(square => board.isInside(square));
