@@ -27,6 +27,6 @@ export default class Pawn extends Piece {
             moveArray.push(new Square(currentSquare.row - 1, currentSquare.col));
         }
 
-        return moveArray.filter(square => board.isReachable(square));
+        return (moveArray.filter(square => board.isReachable(square))).filter(square => board.isInside(square));
     }
 }

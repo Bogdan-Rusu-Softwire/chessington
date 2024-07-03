@@ -17,7 +17,11 @@ export default class Board {
     }
 
     public isReachable(square: Square) {
-        return this.getPiece(square) == undefined;
+        return this.isInside(square) &&  this.getPiece(square) == undefined;
+    }
+
+    public isInside(square: Square) {
+        return square.row >= 0 && square.row < 8 && square.col >= 0 && square.col < 8;
     }
 
     public getPiece(square: Square) {

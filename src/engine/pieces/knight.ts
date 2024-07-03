@@ -19,6 +19,6 @@ export default class Knight extends Piece {
             moveArray.push(new Square(currentSquare.row + dx[index], currentSquare.col + dy[index]));
         }
 
-        return moveArray;
+        return moveArray.filter(square => board.isInside(square));
     }
 }
