@@ -16,6 +16,10 @@ export default class Board {
         this.board[square.row][square.col] = piece;
     }
 
+    public isReachable(square: Square) {
+        return this.getPiece(square) == undefined;
+    }
+
     public getPiece(square: Square) {
         return this.board[square.row][square.col];
     }
