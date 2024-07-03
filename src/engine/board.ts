@@ -50,6 +50,12 @@ export default class Board {
         throw new Error('The supplied piece is not on the board');
     }
 
+    public moveTheRook(fromSquare: Square, toSquare: Square) {
+        const movingPiece = this.getPiece(fromSquare);
+        this.setPiece(toSquare, movingPiece);
+        this.setPiece(fromSquare, undefined);
+    }
+
     public movePiece(fromSquare: Square, toSquare: Square) {
         const movingPiece = this.getPiece(fromSquare);        
         if (!!movingPiece && movingPiece.player === this.currentPlayer) {

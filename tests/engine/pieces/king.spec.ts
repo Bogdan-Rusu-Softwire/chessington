@@ -3,10 +3,43 @@ import Board from '../../../src/engine/board';
 import Player from '../../../src/engine/player';
 import Square from '../../../src/engine/square';
 import Pawn from '../../../src/engine/pieces/pawn';
+import Rook from "../../../src/engine/pieces/rook";
+import Bishop from "../../../src/engine/pieces/bishop";
 
 describe('King', () => {
     let board: Board;
     beforeEach(() => board = new Board());
+
+    it('can make castling', () => {
+       const king: King = new King(Player.WHITE);
+       board.setPiece(Square.at(0, 4), king);
+
+       const rook: Rook = new Rook(Player.WHITE);
+       board.setPiece(Square.at(0, 7), rook);
+
+       const moves = king.getAvailableMoves(board);
+
+       const expectedCastling = [Square.at(0, 6)];
+
+       moves.should.deep.include.members(expectedCastling);
+    });
+
+    it('cannot make castling', () => {
+        const king: King = new King(Player.WHITE);
+        board.setPiece(Square.at(0, 4), king);
+
+        const rook: Rook = new Rook(Player.WHITE);
+        board.setPiece(Square.at(0, 7), rook);
+
+        const bishop: Bishop = new Bishop(Player.WHITE);
+        board.setPiece(Square.at(0, 5), bishop);
+
+        const moves = king.getAvailableMoves(board);
+
+        const expectedCastling = [Square.at(0, 6)];
+
+        moves.should.not.deep.include.members(expectedCastling);
+    });
 
     it('can move to adjacent squares', () => {
         const king = new King(Player.WHITE);
