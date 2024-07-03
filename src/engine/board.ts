@@ -2,6 +2,7 @@ import Player from './player';
 import GameSettings from './gameSettings';
 import Square from './square';
 import Piece from './pieces/piece';
+import King from "./pieces/king";
 
 export default class Board {
     public currentPlayer: Player;
@@ -18,6 +19,16 @@ export default class Board {
 
     public isReachable(square: Square) {
         return this.isInside(square) &&  this.getPiece(square) == undefined;
+    }
+
+    public isEnemyPiece(source: Square, target: Square) {
+        if (!this.isInside(target))
+            return false;
+        return !this.isReachable(target) && this.getPiece(target)?.player != this.getPiece(source)?.player && !this.isTargetKing(target);
+    }
+
+    public isTargetKing(square: Square) {
+        return this.getPiece(square) instanceof King;
     }
 
     public isInside(square: Square) {
