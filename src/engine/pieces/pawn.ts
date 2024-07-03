@@ -18,10 +18,7 @@ export default class Pawn extends Piece {
                 const square: Square =  new Square(currentSquare.row + dx[idx], currentSquare.col + dy[idx]);
                 if (board.isEnemyPiece(currentSquare, square))
                     moveArray.push(square);
-                console.log(currentSquare.row + dx[idx], currentSquare.col + dy[idx]);
-                console.log(board.isEnemyPiece(currentSquare, square));
             }
-            console.log(moveArray);
             if (!board.isReachable(new Square(currentSquare.row + 1, currentSquare.col)))
                 return moveArray;
             if (currentSquare.row == 1 && board.isReachable(new Square(currentSquare.row + 2, currentSquare.col))) {
