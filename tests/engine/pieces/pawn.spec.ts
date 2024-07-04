@@ -39,7 +39,6 @@ describe('Pawn', () => {
             board.setPiece(Square.at(1, 7), pawn);
 
             const moves = pawn.getAvailableMoves(board);
-
             moves.should.have.length(2);
             moves.should.deep.include.members([Square.at(2, 7), Square.at(3, 7)]);
         });

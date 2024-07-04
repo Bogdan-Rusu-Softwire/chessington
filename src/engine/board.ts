@@ -7,6 +7,8 @@ import King from "./pieces/king";
 export default class Board {
     public currentPlayer: Player;
     private readonly board: (Piece | undefined)[][];
+    private whiteIsInCheck: boolean = false;
+    private blackIsInCheck: boolean = false;
 
     public constructor(currentPlayer?: Player) {
         this.currentPlayer = currentPlayer ? currentPlayer : Player.WHITE;
@@ -40,6 +42,7 @@ export default class Board {
     }
 
     public findPiece(pieceToFind: Piece) {
+        //console.log(this.board[1][7] === pieceToFind);
         for (let row = 0; row < this.board.length; row++) {
             for (let col = 0; col < this.board[row].length; col++) {
                 if (this.board[row][col] === pieceToFind) {
@@ -56,6 +59,46 @@ export default class Board {
         this.setPiece(fromSquare, undefined);
     }
 
+    private getKingPosition(): Square {
+        for (let i = 0; i < 8; i++)
+            for (let j = 0; j <  8; j++) {
+                if (this.getPiece(Square.at(i, j)) instanceof King && this.getPiece(Square.at(i, j))?.player == this.currentPlayer) {
+                    return Square.at(i, j);
+                }
+            }
+        return Square.at(-1, -1);
+    }
+
+    private getPossibleAttackingPositionsToKing(kingPosition: Square): Square[] {
+        if (kingPosition.col === -1 && kingPosition.row === -1)
+            return new Array(0);
+        const dx = [-1, 0, 1, -1, 1, -1, 0, 1];
+        const dy = [-1, -1, -1, 0, 0, 1, 1, 1];
+
+        let possibleAttackingSquares: Square[] = Array(0);
+
+        for (let index = 0; index < dx.length; index++) {
+            let xPos = kingPosition.row + dx[index];
+            let yPos = kingPosition.col + dy[index];
+            while (this.isReachable(Square.at(xPos, yPos))) {
+                xPos += dx[index];
+                yPos += dy[index];
+            }
+
+            if (this.isInside(Square.at(xPos, yPos))) {
+                if (this.getPiece(Square.at(xPos, yPos))?.player != this.getPiece(kingPosition)?.player) {
+                    possibleAttackingSquares.push(Square.at(xPos, yPos));
+                }
+            }
+        }
+
+        return possibleAttackingSquares;
+    }
+
+    public getAllPiecesThatPutKingInCheck(): Square[] {
+        return this.getPossibleAttackingPositionsToKing(this.getKingPosition());
+    }
+
     public movePiece(fromSquare: Square, toSquare: Square) {
         const movingPiece = this.getPiece(fromSquare);        
         if (!!movingPiece && movingPiece.player === this.currentPlayer) {
@@ -63,6 +106,21 @@ export default class Board {
             this.setPiece(fromSquare, undefined);
             this.currentPlayer = (this.currentPlayer === Player.WHITE ? Player.BLACK : Player.WHITE);
         }
+
+        if (this.getAllPiecesThatPutKingInCheck().length > 0) {
+            if (this.currentPlayer === Player.WHITE) {
+                this.whiteIsInCheck = true;
+            } else {
+                this.blackIsInCheck = true;
+            }
+        } else {
+            if (this.currentPlayer === Player.BLACK) {
+                this.whiteIsInCheck = true;
+            } else {
+                this.blackIsInCheck = true;
+            }
+        }
+
     }
 
     private createBoard() {

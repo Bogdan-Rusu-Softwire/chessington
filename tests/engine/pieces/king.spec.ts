@@ -5,24 +5,13 @@ import Square from '../../../src/engine/square';
 import Pawn from '../../../src/engine/pieces/pawn';
 import Rook from "../../../src/engine/pieces/rook";
 import Bishop from "../../../src/engine/pieces/bishop";
+import Queen from "../../../src/engine/pieces/queen";
 
 describe('King', () => {
     let board: Board;
     beforeEach(() => board = new Board());
 
-    it('can make castling', () => {
-       const king: King = new King(Player.WHITE);
-       board.setPiece(Square.at(0, 4), king);
 
-       const rook: Rook = new Rook(Player.WHITE);
-       board.setPiece(Square.at(0, 7), rook);
-
-       const moves = king.getAvailableMoves(board);
-
-       const expectedCastling = [Square.at(0, 6)];
-
-       moves.should.deep.include.members(expectedCastling);
-    });
 
     it('cannot make castling', () => {
         const king: King = new King(Player.WHITE);
@@ -106,5 +95,64 @@ describe('King', () => {
         const moves = king.getAvailableMoves(board);
 
         moves.should.not.deep.include(Square.at(5, 5));
+    });
+
+    it('can make castling', () => {
+        const king: King = new King(Player.WHITE);
+        board.setPiece(Square.at(0, 4), king);
+
+        const rook: Rook = new Rook(Player.WHITE);
+        board.setPiece(Square.at(0, 7), rook);
+
+        const moves = king.getAvailableMoves(board);
+
+        const expectedCastling = [Square.at(0, 6)];
+
+        moves.should.deep.include.members(expectedCastling);
+    });
+
+    it('cannot move to position in check if is in check', () => {
+        const king: King = new King(Player.WHITE);
+        board.setPiece(Square.at(0, 4), king);
+
+        const rook: Rook = new Rook(Player.BLACK);
+        board.setPiece(Square.at(0, 7), rook);
+
+        const moves = king.getAvailableMoves(board);
+
+        const expectedCastling = [Square.at(0, 5), Square.at(0, 3)];
+
+        moves.should.not.deep.include.members(expectedCastling);
+    });
+
+    it('can overtake opposing piece if in check', () => {
+        const king: King = new King(Player.WHITE);
+        board.setPiece(Square.at(0, 6), king);
+
+        const rook: Rook = new Rook(Player.BLACK);
+        board.setPiece(Square.at(0, 7), rook);
+
+        const moves = king.getAvailableMoves(board);
+
+        const expectedCastling = [Square.at(0, 7)];
+
+        moves.should.deep.include.members(expectedCastling);
+    });
+
+    it('can move allied piece in front of opposing piece if in check', () => {
+        const king: King = new King(Player.WHITE);
+        board.setPiece(Square.at(0, 4), king);
+
+        const queen: Queen = new Queen(Player.WHITE);
+        board.setPiece(Square.at(2, 4), queen);
+
+        const rook: Rook = new Rook(Player.BLACK);
+        board.setPiece(Square.at(0, 7), rook);
+
+        const moves = queen.getAvailableMoves(board);
+
+        const expectedCastling = [Square.at(0, 6)];
+
+        moves.should.deep.include.members(expectedCastling);
     });
 });

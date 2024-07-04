@@ -8,7 +8,7 @@ export default class Bishop extends Piece {
         super(player);
     }
 
-    public getAvailableMoves(board: Board) {
+    public getAvailableMovesBeforeCheck(board: Board) {
         const currentSquare = board.findPiece(this);
         const moveArray: any[] = new Array(0);
         for (let row = currentSquare.row + 1, col = currentSquare.col + 1 ; row < 8 && col < 8; row++, col++) {

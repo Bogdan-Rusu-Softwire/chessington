@@ -26,7 +26,7 @@ export default class King extends Piece {
         }
     }
 
-    public getAvailableMoves(board: Board) {
+    public getAvailableMovesBeforeCheck(board: Board) {
         const currentSquare = board.findPiece(this);
         const moveArray = new Array(0);
         const dx = [-1, -1, -1, 0, 0, 1, 1, 1];
