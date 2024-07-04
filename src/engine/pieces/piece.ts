@@ -11,6 +11,29 @@ export default class Piece {
         this.player = player;
         this.isMoved = false;
     }
+
+    public getMovesInDirections(board: Board, currentSquare:Square, dx: number[], dy: number[]): Square[] {
+        const moveArray: any[] = new Array(0);
+        for (let index = 0; index < dx.length; index++) {
+            let row = currentSquare.row + dx[index];
+            let col = currentSquare.col + dy[index];
+
+            while (board.isInside(Square.at(row, col))) {
+                if (board.isEnemyPiece(currentSquare, new Square(row, col))) {
+                    moveArray.push(new Square(row, col));
+                    break;
+                }
+                if (!board.isReachable(new Square(row, col)))
+                    break;
+                moveArray.push(new Square(row, col));
+
+                row += dx[index];
+                col += dy[index];
+            }
+        }
+        return moveArray;
+    }
+
     public getAvailableMoves(board: Board) {
         return this.getAvailableMovesBeforeCheck(board).filter(targetSquare => {
            let oldSquare = board.findPiece(this);
