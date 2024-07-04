@@ -52,14 +52,14 @@ export default class King extends Piece {
 
         if (this.player == Player.WHITE) {
             if (currentSquare.row == 0 && currentSquare.col == 4 && newSquare.row == 0 && newSquare.col == 6)
-                board.moveTheRook(new Square(0, 7), new Square(0, 5));
+                board.moveTheRookForCastling(new Square(0, 7), new Square(0, 5));
             if (currentSquare.row == 0 && currentSquare.col == 4 && newSquare.row == 0 && newSquare.col == 1)
-                board.moveTheRook(new Square(0, 0), new Square(0, 2));
+                board.moveTheRookForCastling(new Square(0, 0), new Square(0, 2));
         } else {
             if (currentSquare.row == 7 && currentSquare.col == 4 && newSquare.row == 7 && newSquare.col == 6)
-                board.moveTheRook(new Square(7, 7), new Square(7, 5));
+                board.moveTheRookForCastling(new Square(7, 7), new Square(7, 5));
             if (currentSquare.row == 7 && currentSquare.col == 4 && newSquare.row == 7 && newSquare.col == 1)
-                board.moveTheRook(new Square(7, 0), new Square(7, 2));
+                board.moveTheRookForCastling(new Square(7, 0), new Square(7, 2));
         }
 
         this.isMoved = true;
