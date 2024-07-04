@@ -155,4 +155,44 @@ describe('King', () => {
 
         moves.should.deep.include.members(expectedCastling);
     });
+
+    it('black is in checkmate', () => {
+        board.currentPlayer = Player.BLACK;
+        const king: King = new King(Player.WHITE);
+        board.setPiece(Square.at(5, 4), king);
+
+        const queen: Queen = new Queen(Player.WHITE);
+        board.setPiece(Square.at(1, 4), queen);
+
+        const rook: Rook = new Rook(Player.WHITE);
+        board.setPiece(Square.at(0, 7), rook);
+
+        const blackKing: King = new King(Player.BLACK);
+        board.setPiece(Square.at(0, 0), blackKing);
+
+        const moves = blackKing.getAvailableMoves(board);
+        // console.log(blackKing.getAvailableMoves(board));
+        // console.log(board.currentPlayer);
+        board.verifyIfCheckMate().should.be.equal(true);
+    });
+
+    it('black cannot move in check', () => {
+        board.currentPlayer = Player.BLACK;
+        const king: King = new King(Player.BLACK);
+        board.setPiece(Square.at(6, 4), king);
+
+        const pawnWhite1: Pawn = new Pawn(Player.WHITE);
+        board.setPiece(Square.at(3, 4), pawnWhite1);
+
+        const pawnWhite2: Pawn = new Pawn(Player.WHITE);
+        board.setPiece(Square.at(4, 3), pawnWhite2);
+
+        const pawnBlack1: Pawn = new Pawn(Player.BLACK);
+        board.setPiece(Square.at(4, 4), pawnBlack1);
+
+        const moves = king.getAvailableMoves(board);
+
+        const expectedMoves = [Square.at(5, 4)];
+        moves.should.not.deep.include.members(expectedMoves);
+    });
 });

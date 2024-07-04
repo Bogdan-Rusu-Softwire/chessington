@@ -3,12 +3,15 @@ import GameSettings from './gameSettings';
 import Square from './square';
 import Piece from './pieces/piece';
 import King from "./pieces/king";
+import Pawn from "./pieces/pawn";
 
 export default class Board {
     public currentPlayer: Player;
     private readonly board: (Piece | undefined)[][];
     private whiteIsInCheck: boolean = false;
     private blackIsInCheck: boolean = false;
+    public whiteIsInCheckMate: boolean = false;
+    public blackIsInCheckMate: boolean = false;
 
     public constructor(currentPlayer?: Player) {
         this.currentPlayer = currentPlayer ? currentPlayer : Player.WHITE;
@@ -42,7 +45,6 @@ export default class Board {
     }
 
     public findPiece(pieceToFind: Piece) {
-        //console.log(this.board[1][7] === pieceToFind);
         for (let row = 0; row < this.board.length; row++) {
             for (let col = 0; col < this.board[row].length; col++) {
                 if (this.board[row][col] === pieceToFind) {
@@ -72,8 +74,9 @@ export default class Board {
     private getPossibleAttackingPositionsToKing(kingPosition: Square): Square[] {
         if (kingPosition.col === -1 && kingPosition.row === -1)
             return new Array(0);
-        const dx = [-1, 0, 1, -1, 1, -1, 0, 1];
-        const dy = [-1, -1, -1, 0, 0, 1, 1, 1];
+        const dx = [-1, 0, 1, -1, 1, -1, 0, 1, -2, -1, 1, 2, 2, 1, -1, -2];
+        const dy = [-1, -1, -1, 0, 0, 1, 1, 1, -1, -2, -2, -1, 1, 2, 2, 1];
+        const knightFlag = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1];
 
         let possibleAttackingSquares: Square[] = Array(0);
 
@@ -83,11 +86,27 @@ export default class Board {
             while (this.isReachable(Square.at(xPos, yPos))) {
                 xPos += dx[index];
                 yPos += dy[index];
+
+                if (knightFlag[index] == 1) {
+                    break;
+                }
             }
+
 
             if (this.isInside(Square.at(xPos, yPos))) {
                 if (this.getPiece(Square.at(xPos, yPos))?.player != this.getPiece(kingPosition)?.player) {
-                    possibleAttackingSquares.push(Square.at(xPos, yPos));
+                    // replace king with an undefined tile temporarily
+                    let oldKing = this.getPiece(kingPosition);
+                    let pawnTemp;
+                    if (oldKing != undefined)
+                        pawnTemp = new Pawn(oldKing?.player);
+                    this.setPiece(kingPosition, pawnTemp);
+                    let possibleAttackingPieceMoves = this.getPiece(Square.at(xPos, yPos))?.getAvailableMovesBeforeCheck(this);
+                    this.setPiece(kingPosition, oldKing);
+
+                    let exactAttackingPieces = possibleAttackingPieceMoves?.filter(position => (kingPosition.row == position.row && kingPosition.col == position.col));
+                    if (exactAttackingPieces != undefined && exactAttackingPieces.length >= 1)
+                        possibleAttackingSquares.push(Square.at(xPos, yPos));
                 }
             }
         }
@@ -97,6 +116,22 @@ export default class Board {
 
     public getAllPiecesThatPutKingInCheck(): Square[] {
         return this.getPossibleAttackingPositionsToKing(this.getKingPosition());
+    }
+
+    public verifyIfCheckMate(): boolean {
+        let cantMakeAnyMove = true;
+        for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+                if (this.getPiece(Square.at(row, col))?.player == this.currentPlayer) {
+                    let currentPiece = this.getPiece(Square.at(row, col));
+                    if (currentPiece != undefined && currentPiece?.getAvailableMoves(this).length >= 1) {
+                        cantMakeAnyMove = false;
+                    }
+                }
+            }
+        }
+
+        return cantMakeAnyMove;
     }
 
     public movePiece(fromSquare: Square, toSquare: Square) {
@@ -110,17 +145,22 @@ export default class Board {
         if (this.getAllPiecesThatPutKingInCheck().length > 0) {
             if (this.currentPlayer === Player.WHITE) {
                 this.whiteIsInCheck = true;
+                if (this.verifyIfCheckMate())
+                    this.whiteIsInCheckMate = true;
+
             } else {
                 this.blackIsInCheck = true;
+                if (this.verifyIfCheckMate()) {
+                    this.blackIsInCheckMate = true;
+                }
             }
         } else {
             if (this.currentPlayer === Player.BLACK) {
-                this.whiteIsInCheck = true;
+                this.blackIsInCheck = false;
             } else {
-                this.blackIsInCheck = true;
+                this.whiteIsInCheck = false;
             }
         }
-
     }
 
     private createBoard() {
