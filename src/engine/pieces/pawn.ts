@@ -2,6 +2,7 @@ import Piece from './piece';
 import Player from '../player';
 import Board from '../board';
 import Square from "../square";
+import Queen from "./queen";
 
 export default class Pawn extends Piece {
     public constructor(player: Player) {
@@ -42,5 +43,19 @@ export default class Pawn extends Piece {
         }
 
         return moveArray.filter(square => board.isInside(square));
+    }
+
+    public moveTo(board: Board, newSquare: Square) {
+        const currentSquare = board.findPiece(this);
+        board.movePiece(currentSquare, newSquare);
+        if (newSquare.row == 0 || newSquare.row == 7) {
+            let newQueen: Queen;
+            if (this.player == Player.WHITE) {
+                newQueen = new Queen(Player.WHITE);
+            } else {
+                newQueen = new Queen(Player.BLACK);
+            }
+            board.setPiece(newSquare, newQueen);
+        }
     }
 }
