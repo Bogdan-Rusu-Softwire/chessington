@@ -77,7 +77,16 @@ function onSnapEnd() {
 }
 
 function updateStatus() {
+
     const player = board.currentPlayer === Player.WHITE ? 'White' : 'Black';
+    if (board.whiteIsInCheckMate === true) {
+        document.getElementById('turn-status').innerHTML = `Checkmate! Black won!`;
+        return;
+    }
+    if (board.blackIsInCheckMate === true) {
+        document.getElementById('turn-status').innerHTML = `Checkmate! White won!`;
+        return;
+    }
     document.getElementById('turn-status').innerHTML = `${player} to move`;
 }
 
